@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TranquilVR - Virtual Reality Therapeutic Space</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/style.css">
+  
+  <!-- A-Frame VR Library -->
+  <script src="/aframe.min.js"></script>
+  <!-- A-Frame Environment Component -->
+  <script src="/aframe-environment-component.min.js"></script>
+</head>
+<body>
+
+  <!-- ========================================================== -->
+  <!-- 2D LOBBY CONFIGURATION OVERLAY                             -->
+  <!-- ========================================================== -->
+  <div id="lobby-container">
+    <div class="lobby-wrapper">
+      
+      <!-- Logo & Header -->
+      <div class="lobby-header">
+        <div class="logo">
+          <span class="logo-icon">🌸</span>
+          <h1 class="logo-text">Tranquil<span>VR</span></h1>
+        </div>
+        <p class="subtitle">Virtual Reality Therapeutic Space</p>
+      </div>
+      
+      <!-- 3-Column Configuration Grid -->
+      <div class="config-grid">
+        
+        <!-- Column 1: Peran & Identitas -->
+        <div class="config-card">
+          <h2 class="section-title">
+            <span class="step-num">1</span>Peran & Identitas
+          </h2>
+          
+          <div class="role-selector">
+            <div class="role-btn active" id="btn-role-therapist" data-role="psychologist">
+              <div class="role-icon">👩‍⚕️</div>
+              <div class="role-info">
+                <h3>Psikolog</h3>
+                <p>Mengontrol musik ambient, kartu emosi, dan memandu sesi terapi.</p>
+              </div>
+            </div>
+            <div class="role-btn" id="btn-role-patient" data-role="patient">
+              <div class="role-icon">👤</div>
+              <div class="role-info">
+                <h3>Pasien</h3>
+                <p>Mengikuti sesi dan mengekspresikan emosi dengan reaksi emoji.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="input-group">
+            <label for="username-input">Nama Anda</label>
+            <input type="text" id="username-input" value="dr. Elz, Psikolog" placeholder="Masukkan nama Anda...">
+          </div>
+        </div>
+        
+        <!-- Column 2: Konfigurasi Ruang -->
+        <div class="config-card">
+          <h2 class="section-title">
+            <span class="step-num">2</span>Konfigurasi Ruang
+          </h2>
+          
+          <!-- Psychologist Room Code panel (Active by default) -->
+          <div class="session-setup-panel active" id="session-setup-therapist">
+            <label>Kode Ruangan</label>
+            <div class="room-code-display">
+              <span id="room-code-val">TRQ-482-SEA</span>
+              <button id="btn-copy-code" title="Salin Kode">📋</button>
+            </div>
+            <p class="tip">Bagikan kode ini kepada pasien Anda agar mereka dapat bergabung.</p>
+          </div>
+          
+          <!-- Patient Room Code Input Panel -->
+          <div class="session-setup-panel" id="session-setup-patient">
+            <label for="room-code-input">Masukkan Kode Ruangan</label>
+            <input type="text" id="room-code-input" placeholder="TRQ-XXX-XXX">
+            <p class="tip">Mintalah kode ruangan dari psikolog Anda untuk bergabung.</p>
+          </div>
+          
+          <!-- Environment Picker -->
+          <div class="env-picker-container" style="position: relative;">
+            <label>Pilih Lingkungan</label>
+            
+            <!-- restricted message overlay (shown to patient) -->
+            <div id="env-picker-restrict-msg" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 13, 22, 0.85); backdrop-filter: blur(4px); border-radius: 12px; align-items: center; justify-content: center; text-align: center; padding: 1rem; z-index: 10;">
+              <p class="tip font-warning">Hanya Psikolog yang dapat mengubah lingkungan.</p>
+            </div>
+            
+            <div class="env-grid">
+              <div class="env-btn active" data-env="beach">
+                <span class="env-icon">🏖️</span>
+                <span class="env-name">Pantai</span>
+              </div>
+              <div class="env-btn" data-env="forest">
+                <span class="env-icon">🌲</span>
+                <span class="env-name">Hutan</span>
+              </div>
+              <div class="env-btn" data-env="sanctuary">
+                <span class="env-icon">🌌</span>
+                <span class="env-name">Kuil</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Column 3: Kustomisasi & Perangkat -->
+        <div class="config-card">
+          <h2 class="section-title">
+            <span class="step-num">3</span>Kustomisasi & Perangkat
+          </h2>
+          
+          <div class="avatar-selector-group" style="display: none;">
+            <label>Warna Avatar Anda</label>
+            <div class="avatar-color-grid">
+              <div class="color-dot active" data-color="teal" style="background-color: var(--color-teal); color: var(--color-teal-glow)"></div>
+              <div class="color-dot" data-color="indigo" style="background-color: var(--color-indigo); color: var(--color-indigo-glow)"></div>
+              <div class="color-dot" data-color="rose" style="background-color: var(--color-rose); color: var(--color-rose-glow)"></div>
+              <div class="color-dot" data-color="amber" style="background-color: var(--color-amber); color: var(--color-amber-glow)"></div>
+            </div>
+          </div>
+          
+          <div class="device-status" style="display: none;">
+            <label>Status Perangkat</label>
+            
+            <!-- Mic Status -->
+            <div class="status-item">
+              <span class="status-icon">🎙️</span>
+              <div class="status-desc">
+                <span class="status-name">Microphone</span>
+                <span class="status-value active" id="mic-status">Mendeteksi Suara...</span>
+              </div>
+              <div class="mic-visualizer-container">
+                <div class="mic-bar"></div>
+                <div class="mic-bar"></div>
+                <div class="mic-bar"></div>
+                <div class="mic-bar"></div>
+                <div class="mic-bar"></div>
+              </div>
+            </div>
+            
+            <!-- VR Headset Status -->
+            <div class="status-item">
+              <span class="status-icon">🥽</span>
+              <div class="status-desc">
+                <span class="status-name">VR Headset</span>
+                <span class="status-value" id="vr-status">Mencari...</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Demo Mode Simulation Toggle -->
+          <div class="demo-mode-group">
+            <label class="toggle-container">
+              <div class="toggle-switch">
+                <input type="checkbox" id="demo-mode-checkbox">
+                <span class="toggle-slider"></span>
+              </div>
+              <span class="toggle-label">Demo Mode (Simulasi AI)</span>
+            </label>
+            <p class="tip">Simulasi pergerakan & interaksi partner secara otomatis untuk testing sendirian.</p>
+          </div>
+        </div>
+        
+      </div>
+      
+      <!-- Lobby Footer / Enter VR Button -->
+      <div class="lobby-footer">
+        <button class="btn-primary-glow" id="btn-enter-vr">
+          <span>MASUK KE RUANG VIRTUAL</span>
+        </button>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- Screen Transition Overlay -->
+  <div id="transition-overlay">
+    <div class="spinner"></div>
+    <p id="transition-message">Menghubungkan...</p>
+  </div>
+
+  <!-- Hidden Custom Enter VR Button for A-Frame WebXR -->
+  <button id="custom-enter-vr" style="display: none;"></button>
+
+  <!-- ========================================================== -->
+  <!-- A-FRAME 3D THERAPEUTIC SCENE                               -->
+  <!-- ========================================================== -->
+  <a-scene vr-mode-ui="enterVRButton: #custom-enter-vr" loading-screen="enabled: false">
+    
+    <!-- Immersive 3D Environment (Managed dynamically by JS) -->
+    <a-entity id="scene-environment" environment="preset: arches; seed: 1; playArea: 1.2; ground: flat; active: true"></a-entity>
+
+    <!-- Custom Mood Light (Soft ambient lighting modified by therapist emotion cards) -->
+    <a-light id="mood-light" type="ambient" color="#ffffff" intensity="0.25"></a-light>
+
+    <!-- Camera Rig -->
+    <a-entity id="camera-rig" position="0 1.2 2" rotation="0 0 0">
+      <a-entity id="user-camera" camera look-controls wasd-controls="enabled: true; acceleration: 30">
+        <!-- Laser pointer / Cursor for VR / Desktop interaction -->
+        <a-entity cursor="rayOrigin: mouse"
+                  raycaster="objects: .clickable; interval: 100">
+        </a-entity>
+      </a-entity>
+    </a-entity>
+
+    <!-- Therapy chairs -->
+    <a-box position="0 0.25 1.8" width="0.7" height="0.5" depth="0.7" color="#4f3f30" material="roughness:0.9"></a-box>
+    <a-box position="0 0.75 2.15" width="0.7" height="1" depth="0.15" color="#4f3f30" material="roughness:0.9"></a-box>
+    <a-box position="0 0.25 -2.2" width="0.7" height="0.5" depth="0.7" color="#4f3f30" material="roughness:0.9"></a-box>
+    <a-box position="0 0.75 -2.55" width="0.7" height="1" depth="0.15" color="#4f3f30" material="roughness:0.9"></a-box>
+
+    <!-- Side table -->
+    <a-cylinder position="1.2 0.4 1.5" radius="0.25" height="0.05" color="#6b4f30" material="roughness:0.8"></a-cylinder>
+    <a-cylinder position="1.2 0.2 1.5" radius="0.04" height="0.4" color="#4a3620" material="roughness:0.9"></a-cylinder>
+
+    <!-- Breathing Guide (Mindfulness visual aid) -->
+    <a-entity id="breathing-guide-container" position="0 1.35 0" visible="false">
+      <a-sphere id="breathing-guide-sphere" radius="0.15" color="#14b8a6" material="opacity: 0.35; transparent: true; shader: flat"></a-sphere>
+      <a-ring radius-inner="0.14" radius-outer="0.15" color="#14b8a6" rotation="90 0 0" material="opacity: 0.5; transparent: true"></a-ring>
+      <a-ring radius-inner="0.37" radius-outer="0.375" color="#14b8a6" rotation="90 0 0" material="opacity: 0.2; transparent: true"></a-ring>
+      <a-text id="breathing-guide-text" value="TARIK NAPAS" align="center" position="0 0.5 0" color="#ffffff" width="1.8" font="kelsonsans" fontStyle="bold" look-at-camera></a-text>
+    </a-entity>
+
+    <!-- Partner Avatar -->
+    <a-entity id="partner-avatar" position="0 0.5 -2.2" rotation="0 0 0" scale="1.6 1.6 1.6"
+              animation="property: position; to: 0 0.55 -2.2; dir: alternate; loop: true; dur: 2200; easing: easeInOutSine">
+      
+      <!-- Body (Cone) -->
+      <a-cone id="avatar-body" radius-bottom="0.15" radius-top="0.02" height="0.5" color="#6366f1" position="0 0 0"></a-cone>
+      
+      <!-- Head Group (Follows user camera) -->
+      <a-entity id="avatar-head-group" position="0 0.35 0">
+        <!-- Head Sphere -->
+        <a-sphere radius="0.12" color="#6366f1"></a-sphere>
+        <!-- Eyes -->
+        <a-sphere position="-0.04 0.03 0.1" radius="0.02" color="#ffffff"></a-sphere>
+        <a-sphere position="0.04 0.03 0.1" radius="0.02" color="#ffffff"></a-sphere>
+        <!-- Pupils -->
+        <a-sphere position="-0.04 0.03 0.115" radius="0.008" color="#090d16"
+                  animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 1000; easing: easeInOutSine"></a-sphere>
+        <a-sphere position="0.04 0.03 0.115" radius="0.008" color="#090d16"
+                  animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 1000; easing: easeInOutSine"></a-sphere>
+      </a-entity>
+
+      <!-- Hands -->
+      <a-sphere id="avatar-hand-l" position="-0.2 -0.05 0" radius="0.035" color="#6366f1"
+                animation="property: scale; to: 1.1 1.1 1.1; dir: alternate; loop: true; dur: 1500; easing: easeInOutSine"></a-sphere>
+      <a-sphere id="avatar-hand-r" position="0.2 -0.05 0" radius="0.035" color="#6366f1"
+                animation="property: scale; to: 1.1 1.1 1.1; dir: alternate; loop: true; dur: 1500; easing: easeInOutSine"></a-sphere>
+
+      <!-- Emoji Spawn Point -->
+      <a-entity id="partner-emoji-spawn" position="0 0.65 0"></a-entity>
+    </a-entity>
+
+    <!-- Shared Board / Whiteboard - on the back wall -->
+    <a-entity id="shared-board" position="0 1.6 -5.7" rotation="0 0 0">
+      <!-- Shadow/depth frame -->
+      <a-box position="0 0 -0.07" width="2.6" height="1.8" depth="0.06" color="#0f172a"></a-box>
+      <!-- Main frame -->
+      <a-box position="0 0 -0.04" width="2.5" height="1.7" depth="0.05" color="#334155"></a-box>
+      <!-- White surface -->
+      <a-plane position="0 0 0" width="2.3" height="1.55" color="#f8fafc"></a-plane>
+      
+      <!-- Board Header -->
+      <a-text value="TRANQUILBOARD" align="center" position="0 0.65 0.02" color="#64748b" width="1.2" font="kelsonsans" fontStyle="bold"></a-text>
+      
+      <!-- Dynamic Text Content -->
+      <a-text id="board-text-body" value="SILAKAN MULAI SESI" align="center" position="0 0 0.02" color="#1e293b" width="1.5" font="kelsonsans" wrapCount="22"></a-text>
+      
+      <!-- Dynamic TAT Emotion Card Presentation -->
+      <a-entity id="board-card-image" visible="false" position="0 -0.1 0.02">
+        <a-plane width="1.0" height="0.9" color="#e2e8f0"></a-plane>
+        <a-text id="board-card-symbol" value="❤️" align="center" position="0 0.15 0.01" color="#f43f5e" width="4" font="kelsonsans"></a-text>
+        <a-text id="board-card-title" value="KASIH SAYANG" align="center" position="0 -0.25 0.01" color="#1e293b" width="1.5" font="kelsonsans" fontStyle="bold"></a-text>
+      </a-entity>
+    </a-entity>
+
+    <!-- 3D Therapist Control Panel - right side, faces user -->
+    <a-entity id="therapist-control-panel" visible="false" position="1.2 1.1 0.8" look-at-camera-y>
+      <!-- Panel backing with glow border -->
+      <a-box position="0 0 -0.015" width="0.92" height="1.25" depth="0.01" color="#14b8a6" material="opacity:0.25;transparent:true"></a-box>
+      <a-box width="0.88" height="1.2" depth="0.03" color="#0c1829" material="opacity: 0.95; transparent: true"></a-box>
+      <a-text value="THERAPIST HUB" align="center" position="0 0.48 0.02" color="#ffffff" width="1.2" font="kelsonsans" fontStyle="bold"></a-text>
+      
+      <!-- Ambient Audio Section -->
+      <a-text value="AMBIENT AUDIO" align="center" position="0 0.35 0.02" color="#94a3b8" width="0.9" font="kelsonsans"></a-text>
+      <a-box id="btn-sound-ocean" class="spatial-btn" position="-0.22 0.22 0.02" width="0.18" height="0.1" depth="0.02" color="#1e293b">
+        <a-text value="Ocean" align="center" position="0 0 0.015" color="#ffffff" width="0.8" font="kelsonsans"></a-text>
+      </a-box>
+      <a-box id="btn-sound-rain" class="spatial-btn" position="0 0.22 0.02" width="0.18" height="0.1" depth="0.02" color="#1e293b">
+        <a-text value="Rain" align="center" position="0 0 0.015" color="#ffffff" width="0.8" font="kelsonsans"></a-text>
+      </a-box>
+      <a-box id="btn-sound-forest" class="spatial-btn" position="0.22 0.22 0.02" width="0.18" height="0.1" depth="0.02" color="#1e293b">
+        <a-text value="Forest" align="center" position="0 0 0.015" color="#ffffff" width="0.8" font="kelsonsans"></a-text>
+      </a-box>
+
+      <!-- Emotion Cards Section -->
+      <a-text value="EMOTION CARDS" align="center" position="0 0.05 0.02" color="#94a3b8" width="0.9" font="kelsonsans"></a-text>
+      <a-box id="btn-card-love" class="spatial-btn" position="-0.25 -0.08 0.02" width="0.22" height="0.1" depth="0.02" color="#1e293b">
+        <a-text value="Love" align="center" position="0 0 0.015" color="#ffffff" width="0.8" font="kelsonsans"></a-text>
+      </a-box>
+      <a-box id="btn-card-worry" class="spatial-btn" position="0 -0.08 0.02" width="0.22" height="0.1" depth="0.02" color="#1e293b">
+        <a-text value="Anxiety" align="center" position="0 0 0.015" color="#ffffff" width="0.8" font="kelsonsans"></a-text>
+      </a-box>
+      <a-box id="btn-card-calm" class="spatial-btn" position="0.25 -0.08 0.02" width="0.22" height="0.1" depth="0.02" color="#1e293b">
+        <a-text value="Calm" align="center" position="0 0 0.015" color="#ffffff" width="0.8" font="kelsonsans"></a-text>
+      </a-box>
+      
+      <!-- Clear Board Button -->
+      <a-box id="btn-card-clear" class="spatial-btn" position="0 -0.22 0.02" width="0.5" height="0.1" depth="0.02" color="#14b8a6">
+        <a-text value="Clear Board" align="center" position="0 0 0.015" color="#ffffff" width="0.9" font="kelsonsans" fontStyle="bold"></a-text>
+      </a-box>
+
+      <!-- Breathing Guide Toggle Button -->
+      <a-box id="btn-breathing-toggle" class="spatial-btn" position="0 -0.36 0.02" width="0.5" height="0.1" depth="0.02" color="#1e293b">
+        <a-text id="txt-breathing-toggle" value="Breathing Guide: OFF" align="center" position="0 0 0.015" color="#ffffff" width="0.85" font="kelsonsans"></a-text>
+      </a-box>
+    </a-entity>
+
+    <!-- 3D Patient Expression Panel - right of patient seat -->
+    <a-entity id="patient-expression-panel" visible="false" position="1.2 1.1 -1.8" rotation="0 -30 0">
+      <a-box position="0 0 -0.015" width="0.72" height="0.72" depth="0.01" color="#6366f1" material="opacity:0.25;transparent:true"></a-box>
+      <a-box width="0.68" height="0.68" depth="0.03" color="#0c1829" material="opacity: 0.95; transparent: true"></a-box>
+      <a-text value="EXPRESS EMOTION" align="center" position="0 0.22 0.02" color="#ffffff" width="1.2" font="kelsonsans" fontStyle="bold"></a-text>
+      
+      <!-- Emoji reactions -->
+      <a-box id="btn-emoji-happy" class="spatial-btn" position="-0.15 0.05 0.02" width="0.2" height="0.12" depth="0.02" color="#1e293b">
+        <a-text value="😊 Happy" align="center" position="0 0 0.015" color="#ffffff" width="0.8" font="kelsonsans"></a-text>
+      </a-box>
+      <a-box id="btn-emoji-anxious" class="spatial-btn" position="0.15 0.05 0.02" width="0.2" height="0.12" depth="0.02" color="#1e293b">
+        <a-text value="😰 Panic" align="center" position="0 0 0.015" color="#ffffff" width="0.8" font="kelsonsans"></a-text>
+      </a-box>
+      <a-box id="btn-emoji-sad" class="spatial-btn" position="-0.15 -0.12 0.02" width="0.2" height="0.12" depth="0.02" color="#1e293b">
+        <a-text value="😢 Sad" align="center" position="0 0 0.015" color="#ffffff" width="0.8" font="kelsonsans"></a-text>
+      </a-box>
+      <a-box id="btn-emoji-calm" class="spatial-btn" position="0.15 -0.12 0.02" width="0.2" height="0.12" depth="0.02" color="#1e293b">
+        <a-text value="😌 Calm" align="center" position="0 0 0.015" color="#ffffff" width="0.8" font="kelsonsans"></a-text>
+      </a-box>
+    </a-entity>
+
+    <!-- 3D Universal Settings Panel - left side, faces user -->
+    <a-entity id="universal-settings-panel" position="-1.2 1.1 0.8" look-at-camera-y>
+      <a-box position="0 0 -0.015" width="0.72" height="0.72" depth="0.01" color="#6366f1" material="opacity:0.25;transparent:true"></a-box>
+      <a-box width="0.68" height="0.68" depth="0.03" color="#0c1829" material="opacity: 0.95; transparent: true"></a-box>
+      <a-text value="SETTINGS" align="center" position="0 0.22 0.02" color="#ffffff" width="1.2" font="kelsonsans" fontStyle="bold"></a-text>
+      
+      <a-text id="vr-room-info-text" value="Room: TRQ-482-SEA" align="center" position="0 0.12 0.02" color="#94a3b8" width="1.1" font="kelsonsans"></a-text>
+      <a-text id="vr-timer-text" value="Durasi: 00:00" align="center" position="0 0.02 0.02" color="#ffffff" width="1.4" font="kelsonsans" fontStyle="bold"></a-text>
+      <a-text id="active-bgm-text" value="BGM: OFF" align="center" position="0 -0.08 0.02" color="#94a3b8" width="0.9" font="kelsonsans"></a-text>
+      
+      <a-box id="btn-vr-exit" class="spatial-btn" position="0 -0.2 0.02" width="0.4" height="0.1" depth="0.02" color="#f43f5e">
+        <a-text value="Exit Session" align="center" position="0 0 0.015" color="#ffffff" width="1.1" font="kelsonsans" fontStyle="bold"></a-text>
+      </a-box>
+    </a-entity>
+
+  </a-scene>
+
+  <!-- Application Logic -->
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

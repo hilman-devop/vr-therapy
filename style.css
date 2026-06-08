@@ -1,0 +1,776 @@
+/* ========================================================== */
+/* DESIGN SYSTEM & GLOBAL STYLES                             */
+/* ========================================================== */
+:root {
+  --bg-dark: #090d16;
+  --panel-bg: rgba(15, 23, 42, 0.45);
+  --panel-border: rgba(255, 255, 255, 0.07);
+  --panel-glow: rgba(99, 102, 241, 0.15);
+  
+  --color-teal: #14b8a6;
+  --color-teal-glow: rgba(20, 184, 166, 0.35);
+  --color-indigo: #6366f1;
+  --color-indigo-glow: rgba(99, 102, 241, 0.35);
+  --color-rose: #f43f5e;
+  --color-rose-glow: rgba(244, 63, 94, 0.35);
+  --color-amber: #f59e0b;
+  --color-amber-glow: rgba(245, 158, 11, 0.35);
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  
+  --font-main: 'Plus Jakarta Sans', sans-serif;
+  --font-display: 'Outfit', sans-serif;
+  
+  --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-dark);
+  font-family: var(--font-main);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ========================================================== */
+/* A-FRAME CANVAS BACKGROUND STYLING                         */
+/* ========================================================== */
+a-scene {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 1;
+  display: block !important;
+}
+
+a-scene canvas {
+  width: 100vw !important;
+  height: 100vh !important;
+  display: block !important;
+}
+
+/* Hide VR button while in Lobby */
+.a-enter-vr {
+  z-index: 2;
+  transition: opacity 0.5s ease;
+  display: none !important; /* Managed by JS to show only in VR room */
+}
+
+/* ========================================================== */
+/* LOBBY CONTAINER & OVERLAY                                 */
+/* ========================================================== */
+#lobby-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background: radial-gradient(circle at top left, rgba(17, 24, 39, 0.5), rgba(3, 7, 18, 0.85));
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  transition: opacity 1.0s cubic-bezier(0.16, 1, 0.3, 1), transform 1.0s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+}
+
+#lobby-container.lobby-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(1.05);
+}
+
+.lobby-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Header */
+.lobby-header {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.logo-icon {
+  font-size: 2.5rem;
+  animation: float 3s ease-in-out infinite;
+  display: inline-block;
+}
+
+.logo-text {
+  font-family: var(--font-display);
+  font-size: 2.75rem;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logo-text span {
+  background: linear-gradient(135deg, var(--color-teal) 0%, var(--color-indigo) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  font-family: var(--font-display);
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+/* ========================================================== */
+/* CONFIGURATION GRID (3 Columns)                            */
+/* ========================================================== */
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.75rem;
+}
+
+@media (max-width: 1024px) {
+  .config-grid {
+    grid-template-columns: 1fr;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+  }
+}
+
+.config-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 24px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-smooth);
+}
+
+.config-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
+}
+
+.config-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
+  transform: translateY(-2px);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.step-num {
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, var(--color-indigo) 0%, rgba(99, 102, 241, 0.4) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: white;
+}
+
+/* ========================================================== */
+/* COLUMN 1: ROLE SELECTION & NAME                           */
+/* ========================================================== */
+.role-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.role-btn {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  text-align: left;
+  transition: var(--transition-smooth);
+}
+
+.role-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateX(3px);
+}
+
+.role-btn.active[data-role="psychologist"] {
+  background: rgba(20, 184, 166, 0.08);
+  border-color: var(--color-teal);
+  box-shadow: 0 0 20px rgba(20, 184, 166, 0.15);
+}
+
+.role-btn.active[data-role="patient"] {
+  background: rgba(99, 102, 241, 0.08);
+  border-color: var(--color-indigo);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+}
+
+.role-icon {
+  font-size: 1.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-smooth);
+}
+
+.role-btn.active[data-role="psychologist"] .role-icon {
+  background: rgba(20, 184, 166, 0.15);
+}
+
+.role-btn.active[data-role="patient"] .role-icon {
+  background: rgba(99, 102, 241, 0.15);
+}
+
+.role-info h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.15rem;
+}
+
+.role-info p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-group label, .avatar-selector-group label, .device-status label, .env-picker-container label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.input-group input {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  color: white;
+  font-family: var(--font-main);
+  font-size: 0.95rem;
+  outline: none;
+  transition: var(--transition-smooth);
+}
+
+.input-group input:focus {
+  border-color: var(--color-indigo);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================================== */
+/* COLUMN 2: ROOM CONFIG & ENVIRONMENT                       */
+/* ========================================================== */
+.session-setup-panel {
+  display: none;
+  flex-direction: column;
+  gap: 0.5rem;
+  animation: fadeIn 0.4s ease;
+}
+
+.session-setup-panel.active {
+  display: flex;
+}
+
+.session-setup-panel label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.room-code-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+}
+
+#room-code-val {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-teal);
+  letter-spacing: 0.05em;
+}
+
+#btn-copy-code {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: white;
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-smooth);
+}
+
+#btn-copy-code:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
+}
+
+#room-code-input {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  color: white;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  width: 100%;
+  outline: none;
+  text-align: center;
+  transition: var(--transition-smooth);
+}
+
+#room-code-input:focus {
+  border-color: var(--color-indigo);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
+}
+
+.tip {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.font-warning {
+  color: var(--color-rose);
+  font-weight: 500;
+}
+
+.env-picker-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.env-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+}
+
+.env-btn {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 0.75rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.env-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
+}
+
+.env-btn.active {
+  background: rgba(20, 184, 166, 0.08);
+  border-color: var(--color-teal);
+  box-shadow: 0 0 15px rgba(20, 184, 166, 0.15);
+}
+
+.env-btn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.env-icon {
+  font-size: 1.5rem;
+}
+
+.env-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.env-btn.active .env-name {
+  color: var(--text-primary);
+}
+
+/* ========================================================== */
+/* COLUMN 3: AVATAR & DEVICES                                 */
+/* ========================================================== */
+.avatar-selector-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.avatar-color-grid {
+  display: flex;
+  gap: 0.85rem;
+}
+
+.color-dot {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.color-dot:hover {
+  transform: scale(1.1);
+}
+
+.color-dot.active {
+  border-color: #ffffff;
+  box-shadow: 0 0 15px currentColor;
+}
+
+.device-status {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.status-item {
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  position: relative;
+}
+
+.status-icon {
+  font-size: 1.25rem;
+}
+
+.status-desc {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.status-name {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.status-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.status-value.active {
+  color: var(--color-teal);
+}
+
+/* Mic Visualizer Animation */
+.mic-visualizer-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 18px;
+  width: 30px;
+}
+
+.mic-bar {
+  width: 3px;
+  background-color: var(--color-teal);
+  border-radius: 2px;
+  height: 20%;
+  transition: height 0.1s ease;
+}
+
+/* ========================================================== */
+/* LOBBY FOOTER: ENTER BUTTON                                 */
+/* ========================================================== */
+.lobby-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.btn-primary-glow {
+  background: linear-gradient(135deg, var(--color-teal) 0%, var(--color-indigo) 100%);
+  border: none;
+  border-radius: 16px;
+  padding: 1.1rem 3.5rem;
+  color: white;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.25);
+  transition: var(--transition-smooth);
+}
+
+.btn-primary-glow span {
+  position: relative;
+  z-index: 2;
+  letter-spacing: 0.02em;
+}
+
+.btn-primary-glow::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.15), transparent);
+  transform: skewX(-25deg);
+  transition: 0.75s;
+}
+
+.btn-primary-glow:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.45);
+}
+
+.btn-primary-glow:hover::after {
+  left: 125%;
+}
+
+.btn-primary-glow:active {
+  transform: translateY(-1px);
+}
+
+/* ========================================================== */
+/* SCREEN FADE TRANSITION OVERLAY                            */
+/* ========================================================== */
+#transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-dark);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+#transition-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(255, 255, 255, 0.05);
+  border-top: 3px solid var(--color-teal);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+#transition-message {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ========================================================== */
+/* ANIMATION KEYFRAMES                                       */
+/* ========================================================== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(3deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* ========================================================== */
+/* SPATIAL UI INTERACTIVE CLASSES (FOR 3D CURSOR INTERACT)   */
+/* ========================================================== */
+.clickable {
+  cursor: pointer;
+}
+
+/* Custom Switch Toggle for Demo Mode */
+.demo-mode-group {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  cursor: pointer;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  transition: var(--transition-smooth);
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: var(--text-secondary);
+  border-radius: 50%;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s;
+}
+
+.toggle-switch:has(input:checked) {
+  background: linear-gradient(135deg, var(--color-teal) 0%, var(--color-indigo) 100%);
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+}
+
+.toggle-switch:has(input:checked) .toggle-slider {
+  transform: translateX(20px);
+  background-color: #ffffff;
+}
+
+.toggle-container:hover .toggle-switch {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.toggle-container:hover .toggle-switch:has(input:checked) {
+  background: linear-gradient(135deg, var(--color-teal) 0%, var(--color-indigo) 100%);
+  opacity: 0.95;
+}
+
+.toggle-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  transition: var(--transition-smooth);
+}
+
+.toggle-container:hover .toggle-label {
+  color: var(--text-primary);
+}
+
