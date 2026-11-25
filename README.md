@@ -4,6 +4,12 @@
 
 > Prototipe ruang terapi browser-based dengan lobby, role psikolog/pasien, lingkungan 3D, dan audio prosedural.
 
+## Preview
+
+![Lobby TranquilVR](screenshots/portfolio-preview.jpg)
+
+*Screenshot lobby lokal, diambil 25 November 2026 dengan nama demo. Tidak masuk sesi terapi atau menguji headset; koneksi WebSocket dan akses mikrofon tidak digunakan.*
+
 ## Tentang proyek
 
 Prototipe ruang terapi browser-based dengan lobby, role psikolog/pasien, lingkungan 3D, dan audio prosedural. Dokumentasi ini dibuat sebagai panduan singkat untuk memahami ruang lingkup proyek, menjalankannya secara lokal, dan membaca batasan penggunaannya.
